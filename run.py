@@ -16,12 +16,14 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import torch
+import time 
+import os 
 
 SEED = 42
 LOOKBACK = 21
 TRAIN_SPLIT = 0.70
-EPISODES = 150
-BATCH_SIZE = 64
+EPISODES = 160
+BATCH_SIZE = 128
 PCA_VAR = 0.90
 
 REBALANCING_PERIOD = 1
@@ -29,15 +31,21 @@ TRANSACTION_COST = 0.001
 MIN_HOLDING_PERIOD = 7
 MIN_WEIGHT_CHANGE = 0.03
 
-np.random.seed(SEED)
-torch.manual_seed(SEED)
+CACHE_WORKERS = min(8, max(1, (os.cpu_count() or 12) - 1))
+CACHE_CHUNK_SIZE = 256
+SHOW_PLOTS = True
 
 BASE_DIR = Path(__file__).resolve().parent
-CSV_PATH = r"C:\Users\CHINMAE\OneDrive\Desktop\projects_latest\PCA_RL_holding_period\sample_data.csv"
+CSV_PATH = r"C:\Users\CHINMAE\projects_latest\PCA_RL_holding_period\sample_data.csv"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 
-if __name__ == "__main__":
+def main():
+    total_start = time.perf_counter()
+
+    np.random.seed(SEED)
+    torch.manual_seed(SEED)
+    torch.set_num_threads(8)
 
     # Load your data
     returns = load_data_returns(
@@ -58,7 +66,7 @@ if __name__ == "__main__":
         train_r, variance=PCA_VAR, plot=False, verbose=True
     )
 
-    # 3) Transform TEST using TRAIN scaling + TRAIN eigenvectors
+    # Transform TEST using TRAIN scaling + TRAIN eigenvectors
     train_arr = train_r.to_numpy()
     test_arr = test_r.to_numpy()
 
@@ -88,9 +96,18 @@ if __name__ == "__main__":
         rebalance_every=REBALANCING_PERIOD,
         transaction_cost=TRANSACTION_COST,
         min_holding_days=MIN_HOLDING_PERIOD,
-        min_weight_change=MIN_WEIGHT_CHANGE)   
+        min_weight_change=MIN_WEIGHT_CHANGE,
+        store_history=False,
+        cache_workers=CACHE_WORKERS,
+        cache_chunk_size=CACHE_CHUNK_SIZE,)   
+    
     agent = PPOAgent(state_dim, action_dim)
+
+    # train(train_env, agent, n_episodes=EPISODES, batch_size=BATCH_SIZE)
+    train_start = time.perf_counter()
     train(train_env, agent, n_episodes=EPISODES, batch_size=BATCH_SIZE)
+    train_time = time.perf_counter() - train_start
+    print(f"Training time: {train_time:.2f} sec")
 
     # Backtest on unseen test data
     print("\nBacktesting on test set...")
@@ -101,9 +118,21 @@ if __name__ == "__main__":
     rebalance_every=REBALANCING_PERIOD,
     transaction_cost=TRANSACTION_COST,
     min_holding_days=MIN_HOLDING_PERIOD,
-    min_weight_change=MIN_WEIGHT_CHANGE)  
-    agent_r, equal_r, weights_df = backtest(test_env, agent)
+    min_weight_change=MIN_WEIGHT_CHANGE,
+    store_history=True,
+    cache_workers=CACHE_WORKERS,
+    cache_chunk_size=CACHE_CHUNK_SIZE,
+    )  
 
+    test_start = time.perf_counter()
+    agent_r, equal_r, weights_df = backtest(test_env, agent)
+    test_time = time.perf_counter() - test_start
+    print(f"Testing time: {test_time:.2f} sec")
+    
     # Results
     print_results(agent_r, equal_r)
-    plot_results(agent_r, equal_r, weights_df, ticker_names)
+    plot_results(agent_r, equal_r, weights_df, ticker_names, plot = SHOW_PLOTS)
+    
+
+if __name__ == "__main__":
+    main()
