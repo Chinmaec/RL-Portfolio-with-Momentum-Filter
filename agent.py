@@ -57,22 +57,20 @@ class PPOAgent:
           - log_prob : log probability of this action (needed for PPO update)
           - value    : critic's estimate of state value
         """
-        # state_t = torch.FloatTensor(state).unsqueeze(0)   # add batch dim
         state_t = torch.as_tensor(state, dtype=torch.float32).unsqueeze(0)
 
 
         with torch.no_grad():
             weights, value = self.net(state_t)
         
-        b = self.action_std / np.sqrt(2.0)  # variance-matched to Normal std
+        b = self.action_std / np.sqrt(2.0)  
         dist = torch.distributions.Laplace(weights, torch.full_like(weights, b))
 
         if deterministic:
             action = weights
             log_prob = 0.0  # not used in backtest
         else:
-            # std = torch.full_like(weights, self.action_std)
-            # dist = torch.distributions.Normal(weights, std)
+
             action = dist.sample()
             log_prob = dist.log_prob(action).sum().item()
 
