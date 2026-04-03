@@ -45,7 +45,8 @@ def backtest(env, agent):
 
         state, reward, done = env.step(action)
 
-        last = env.history[-1]
+        # last = env.history[-1]
+        last = env.last_info
         agent_returns.append(last["port_return"])   # net of transaction cost
         equal_returns.append(last["equal_return"])
         weight_history.append(last["weights"])
@@ -87,7 +88,10 @@ def print_results(agent_r, equal_r):
 
 # Plot
 
-def plot_results(agent_r, equal_r, weights_df, ticker_names=None):
+def plot_results(agent_r, equal_r, weights_df, ticker_names=None, plot = True):
+
+    if not plot:
+        return
 
     agent_cum = (1 + agent_r).cumprod()
     equal_cum = (1 + equal_r).cumprod()
