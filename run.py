@@ -1,15 +1,8 @@
-try:
-    from .data import load_data_returns
-    from .environment import Portfolio_Env
-    from .agent import PPOAgent, train
-    from .factors import PCA
-    from .backtest import plot_results, print_results, backtest
-except ImportError:
-    from data import load_data_returns
-    from environment import Portfolio_Env
-    from agent import PPOAgent, train
-    from factors import PCA
-    from backtest import plot_results, print_results, backtest
+from data_loader import load_data_returns
+from environment import Portfolio_Env
+from agent import PPOAgent, train
+from PCA_factors import PCA
+from backtest import plot_results, print_results, backtest
 
 
 import pandas as pd
@@ -36,7 +29,7 @@ CACHE_CHUNK_SIZE = 256
 SHOW_PLOTS = True
 
 BASE_DIR = Path(__file__).resolve().parent
-CSV_PATH = r"C:\Users\CHINMAE\projects_latest\PCA_RL_holding_period\sample_data.csv"
+CSV_PATH = BASE_DIR / "sample_data.csv"      
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 
@@ -66,7 +59,6 @@ def main():
         train_r, variance=PCA_VAR, plot=False, verbose=True
     )
 
-    # Transform TEST using TRAIN scaling + TRAIN eigenvectors
     train_arr = train_r.to_numpy()
     test_arr = test_r.to_numpy()
 
@@ -108,6 +100,7 @@ def main():
     train(train_env, agent, n_episodes=EPISODES, batch_size=BATCH_SIZE)
     train_time = time.perf_counter() - train_start
     print(f"Training time: {train_time:.2f} sec")
+
 
     # Backtest on unseen test data
     print("\nBacktesting on test set...")
