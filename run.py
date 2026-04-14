@@ -1,14 +1,14 @@
 try:
-    from .data import load_data_returns
+    from .data_loader import load_data_returns
     from .environment import Portfolio_Env
     from .agent import PPOAgent, train
-    from .factors import PCA
+    from .PCA_factors import PCA
     from .backtest import plot_results, print_results, backtest
 except ImportError:
-    from data import load_data_returns
+    from data_loader import load_data_returns
     from environment import Portfolio_Env
     from agent import PPOAgent, train
-    from factors import PCA
+    from PCA_factors import PCA
     from backtest import plot_results, print_results, backtest
 
 
@@ -36,7 +36,7 @@ CACHE_CHUNK_SIZE = 256
 SHOW_PLOTS = True
 
 BASE_DIR = Path(__file__).resolve().parent
-CSV_PATH = r"C:\Users\CHINMAE\projects_latest\PCA_RL_holding_period\sample_data.csv"
+CSV_PATH = BASE_DIR / "sample_data.csv"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 
