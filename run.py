@@ -1,8 +1,15 @@
-from data_loader import load_data_returns
-from environment import Portfolio_Env
-from agent import PPOAgent, train
-from PCA_factors import PCA
-from backtest import plot_results, print_results, backtest
+try:
+    from .data_loader import load_data_returns
+    from .environment import Portfolio_Env
+    from .agent import PPOAgent, train
+    from .PCA_factors import PCA
+    from .backtest import plot_results, print_results, backtest
+except ImportError:
+    from data_loader import load_data_returns
+    from environment import Portfolio_Env
+    from agent import PPOAgent, train
+    from PCA_factors import PCA
+    from backtest import plot_results, print_results, backtest
 
 
 import pandas as pd
@@ -29,7 +36,7 @@ CACHE_CHUNK_SIZE = 256
 SHOW_PLOTS = True
 
 BASE_DIR = Path(__file__).resolve().parent
-CSV_PATH = BASE_DIR / "sample_data.csv"      
+CSV_PATH = BASE_DIR / "sample_data.csv"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 

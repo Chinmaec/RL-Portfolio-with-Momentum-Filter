@@ -29,20 +29,25 @@ Classical portfolio methods are often static. This project explores a dynamic al
 - `backtest.py` - performance metrics and plots
 - `sample_data.csv` - sample dataset
 
-## Installation
-```bash
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS/Linux:
-# source .venv/bin/activate
 
-pip install -r requirements.txt
+## Requirements 
+```
+numpy==2.3.3
+scipy==1.16.2
+pandas==2.3.2
+matplotlib==3.10.6
+```
+
+## GitHub Installation
+```bash
+pip install "git+https://github.com/Chinmaec/RL-Portfolio-with-Momentum-Filter.git"
 ```
 
 ## Usage
 ```bash
-python run.py
+cd RL-Portfolio-with-Momentum-Filter
+pip install -r requirements.txt
+python test.py
 ```
 
 ## Expected Output 
@@ -56,6 +61,9 @@ python run.py
 [TEST] PPO CAGR: 14.2% | Sharpe: 1.18 | Max Drawdown: -11.6%
 [TEST] EQW CAGR: 10.5% | Sharpe: 0.91 | Max Drawdown: -14.8%
 ```
-<img src="C:\Users\Akhilesh Tayade\Downloads\Figure_1 (1).png" alt="Equity Curve" width="700"/>
+
+<p align="center">
+  <img src="./images/results.png" alt="PPO Porfolio Agent Backtest Results", width="900"/>
+</p>
 
 
