@@ -22,7 +22,7 @@ import os
 SEED = 42
 LOOKBACK = 21
 TRAIN_SPLIT = 0.70
-EPISODES = 160
+EPISODES = 20
 BATCH_SIZE = 128
 PCA_VAR = 0.90
 
@@ -54,6 +54,8 @@ def main():
         na_method="fill",   # "drop" or "fill"
         fill_value=0.0
     )
+
+    returns = returns.iloc[-1000:]
 
     # Split train/test data
     T, N = returns.shape
@@ -125,13 +127,13 @@ def main():
     )  
 
     test_start = time.perf_counter()
-    agent_r, equal_r, weights_df = backtest(test_env, agent)
+    agent_r, equal_r, ew_bh_r, weights_df = backtest(test_env, agent, test_r)
     test_time = time.perf_counter() - test_start
     print(f"Testing time: {test_time:.2f} sec")
     
     # Results
-    print_results(agent_r, equal_r)
-    plot_results(agent_r, equal_r, weights_df, ticker_names, plot = SHOW_PLOTS)
+    print_results(agent_r, equal_r, ew_bh_r)
+    plot_results(agent_r, equal_r, ew_bh_r, weights_df, ticker_names, plot = SHOW_PLOTS)
     
 
 if __name__ == "__main__":
