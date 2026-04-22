@@ -60,20 +60,5 @@ pip install -r requirements.txt
 python test.py
 ```
 
-## Expected Output 
-```bash
-[INFO] Loading data from sample_data.csv
-[INFO] Train period: 2015-01-01 to 2021-12-31 | Test period: 2022-01-01 to 2023-12-31
-[INFO] PCA factors retained: 5 (explained variance: 82.4%)
-[TRAIN] Episode 010 | Reward: 0.0124 | Turnover: 0.084 | Cost: 0.0011
-[TRAIN] Episode 020 | Reward: 0.0189 | Turnover: 0.071 | Cost: 0.0009
-...
-[TEST] PPO CAGR: 14.2% | Sharpe: 1.18 | Max Drawdown: -11.6%
-[TEST] EQW CAGR: 10.5% | Sharpe: 0.91 | Max Drawdown: -14.8%
-```
-
-<p align="center">
-  <img src="./images/results.png" alt="PPO Porfolio Agent Backtest Results", width="900"/>
-</p>
 
 
