@@ -37,11 +37,22 @@ def max_drawdown(cum_returns):
 def annual_return(returns, periods=252):
     return returns.mean() * periods
 
+def cagr(cum_returns, periods=252):
+    n_periods = len(cum_returns)
+    total_return = cum_returns.iloc[-1]
+    years = n_periods / periods
+    return total_return ** (1 / years) - 1
+
+def calmar_ratio(cum_returns):
+    mdd = max_drawdown(cum_returns)
+    return cagr(cum_returns) / abs(mdd)
+
 def annual_vol(returns, periods=252):
     return returns.std() * np.sqrt(periods)
 
 def hit_rate(agent_r,equal_r):
     return (agent_r > equal_r).mean()
+
 
 # Backtest Functions
 
@@ -99,6 +110,7 @@ def print_results(agent_r, equal_r, ew_bh_r):
         "Ann. Volatility"   : [annual_vol(agent_r),      annual_vol(equal_r),      annual_vol(ew_bh_r)],
         "Sharpe Ratio"      : [sharpe(agent_r),          sharpe(equal_r),          sharpe(ew_bh_r)],
         "Max Drawdown"      : [max_drawdown(agent_cum),  max_drawdown(equal_cum),  max_drawdown(ew_bh_cum)],
+        "Calmar Ratio"      : [calmar_ratio(agent_cum),  calmar_ratio(equal_cum),  calmar_ratio(ew_bh_cum)]
         # "Hit Rate"          : [agent_hit,                equal_hit,                ew_bh_hit],
     }
 
@@ -106,7 +118,7 @@ def print_results(agent_r, equal_r, ew_bh_r):
     print(f"{'Metric':<22} {'Agent':>10} {'Equal Wt':>10} {'EW B&H':>10}")
     print("-" * 66)
     for name, (a, e, b) in metrics.items():
-        if "Value" in name or "Sharpe" in name:
+        if name in ["Final Value($1)", "Sharpe Ratio", "Calmar Ratio"]:
             print(f"{name:<22} {a:>10.3f} {e:>10.3f} {b:>10.3f}")
         else:
             print(f"{name:<22} {a:>10.1%} {e:>10.1%} {b:>10.1%}")
